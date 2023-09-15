@@ -1,0 +1,126 @@
+---
+title: "Mini project"
+author: "S17490_WPK Thamishka"
+date: "2023-08-06"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(GGally)
+library(CCA)
+library(CCP)
+```
+
+
+```{r}
+df <- read.csv("https://stats.idre.ucla.edu/stat/data/mmreg.csv")
+head(df)
+```
+
+```{r}
+dim(df)
+```
+
+```{r}
+summary(df)
+```
+
+```{r}
+psychological_variables <- df[,1:3]
+academic_variable <- df[, 4:8]
+```
+
+```{r}
+head(psychological_variables)
+```
+
+```{r}
+head(academic_variable)
+```
+
+```{r}
+ggpairs(academic_variable)
+```
+
+```{r}
+ggpairs(psychological_variables)
+```
+
+# correlation between variables
+
+```{r}
+matcor(psychological_variables, academic_variable)
+```
+
+# caninical correlation analysis
+
+```{r}
+cc_model = cc(psychological_variables, academic_variable)
+
+# display the canonical correlations
+cc_model$cor
+```
+
+# raw canonical coefficients
+```{r}
+cc_model[3:4]
+```
+# compute canonical loadings
+```{r}
+cc_model2 <- comput(psychological_variables, academic_variable, cc_model)
+
+# display canonical loadings
+cc_model2[3:6]
+```
+# tests of canonical dimensions
+
+```{r}
+rho <- cc_model$cor
+## Define number of observations, number of variables in first set, and number of variables in the second set.
+n <- dim(psychological_variables)[1]
+p <- length(psychological_variables)
+q <- length(academic_variable)
+```
+
+# Calculate p-values using the F-approximations of different test statistics
+
+# (1) Wilks
+```{r}
+p.asym(rho, n, p, q, tstat = "Wilks")
+
+```
+
+# (2) Hotelling
+```{r}
+p.asym(rho, n, p, q, tstat = "Hotelling")
+```
+# (3) Pillai test
+```{r}
+p.asym(rho, n, p, q, tstat = "Pillai")
+```
+
+# (4) Roy test
+```{r}
+p.asym(rho, n, p, q, tstat = "Roy")
+```
+# standardized canonical coefficients
+```{r}
+# psychological canonical coefficients
+s1 <- diag(sqrt(diag(cov(psychological_variables))))
+s1 %*% cc_model$xcoef
+```
+```{r}
+#academic  canonical coefficients
+s2 <- diag(sqrt(diag(cov(academic_variable))))
+s2 %*% cc_model$ycoef
+```
+
+
+

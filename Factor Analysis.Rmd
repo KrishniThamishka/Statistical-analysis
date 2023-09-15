@@ -1,0 +1,380 @@
+---
+title: "Mini Project - 1"
+author: "S17490_WPK Thamishka"
+date: "2023-05-23"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load the Data set
+```{r}
+ds_salaries <- read.csv("~/Desktop/4th Year_I/ST405 - Multivariate Methods II (2)/Mini Project/Mini Project/ds_salaries.csv")
+head(ds_salaries)
+```
+# Details about Data Set
+
+work_year: The year the salary was paid.
+
+experience_level: The experience level in the job during the year
+  EN: Entry-level or Beginner
+  EX: Experienced or Intermediate
+  MI: Mid-level or Mid-career
+  SE: Senior or Expert
+
+employment_type: The type of employment for the role
+  CT: Contract
+  FL: Freelance
+  FT: Full-Time
+  PT: Part-Time
+
+job_title: The role worked in during the year.
+
+salary: The total gross salary amount paid.
+
+salary_currency: The currency of the salary paid as an ISO 4217 currency code.
+  AUD: Australian Dollar
+  BRL: Brazilian Real
+  CAD: Canadian Dollar
+  CHF: Swiss Franc
+  CLP: Chilean Peso
+  CZK: Czech Koruna
+  DKK: Danish Krone
+  EUR: Euro
+  GBP: British Pound
+  HKD: Hong Kong Dollar
+  HUF: Hungarian Forint
+  ILS: Israeli Shekel
+  INR: Indian Rupee
+  JPY: Japanese Yen
+  MXN: Mexican Peso
+  PLN: Polish Złoty
+  SGD: Singapore Dollar
+  THB: Thai Baht
+  TRY: Turkish Lira
+  USD: United States Dollar
+
+salaryinusd: The salary in USD
+
+employee_residence: Employee's primary country of residence in during the work year as an ISO 3166 country code.
+  AE: United Arab Emirates
+  AM: Armenia
+  AR: Argentina
+  AS: American Samoa
+  AT: Austria
+  AU: Australia
+  BA: Bosnia and Herzegovina
+  BE: Belgium
+  BG: Bulgaria
+  BO: Bolivia
+  BR: Brazil
+  CA: Canada
+  CF: Central African Republic
+  CH: Switzerland
+  CL: Chile
+  CN: China
+  CO: Colombia
+  CR: Costa Rica
+  CY: Cyprus
+  CZ: Czech Republic
+  DE: Germany
+  DK: Denmark
+  DO: Dominican Republic
+  DZ: Algeria
+  EE: Estonia
+  EG: Egypt
+  ES: Spain
+  FI: Finland
+  FR: France
+  GB: United Kingdom (Great Britain)
+  GH: Ghana
+  GR: Greece
+  HK: Hong Kong
+  HN: Honduras
+  HR: Croatia
+  HU: Hungary
+  ID: Indonesia
+  IE: Ireland
+  IL: Israel
+  IN: India
+  IQ: Iraq
+  IR: Iran
+  IT: Italy
+  JE: Jersey
+  JP: Japan
+  KE: Kenya
+  KW: Kuwait
+  LT: Lithuania
+  LU: Luxembourg
+  LV: Latvia
+  MA: Morocco
+  MD: Moldova
+  MK: North Macedonia
+  MT: Malta
+  MX: Mexico
+  MY: Malaysia
+  NG: Nigeria
+  NL: Netherlands
+  NZ: New Zealand
+  PH: Philippines
+  PK: Pakistan
+  PL: Poland
+  PR: Puerto Rico
+  PT: Portugal
+  RO: Romania
+  RS: Serbia
+  RU: Russia
+  SE: Sweden
+  SG: Singapore
+  SI: Slovenia
+  SK: Slovakia
+  TH: Thailand
+  TN: Tunisia
+  TR: Turkey
+  UA: Ukraine
+  US: United States
+  UZ: Uzbekistan
+  VN: Vietnam
+
+remote_ratio: The overall amount of work done remotely
+
+company_location: The country of the employer's main office or contracting branch
+  AE: United Arab Emirates
+  AL: Albania
+  AM: Armenia
+  AR: Argentina
+  AS: American Samoa
+  AT: Austria
+  AU: Australia
+  BA: Bosnia and Herzegovina
+  BE: Belgium
+  BO: Bolivia
+  BR: Brazil
+  BS: The Bahamas
+  CA: Canada
+  CF: Central African Republic
+  CH: Switzerland
+  CL: Chile
+  CN: China
+  CO: Colombia
+  CR: Costa Rica
+  CZ: Czech Republic
+  DE: Germany
+  DK: Denmark
+  DZ: Algeria
+  EE: Estonia
+  EG: Egypt
+  ES: Spain
+  FI: Finland
+  FR: France
+  GB: United Kingdom (Great Britain)
+  GH: Ghana
+  GR: Greece
+  HK: Hong Kong
+  HN: Honduras
+  HR: Croatia
+  HU: Hungary
+  ID: Indonesia
+  IE: Ireland
+  IL: Israel
+  IN: India
+  IQ: Iraq
+  IR: Iran
+  IT: Italy
+  JP: Japan
+  KE: Kenya
+  LT: Lithuania
+  LU: Luxembourg
+  LV: Latvia
+  MA: Morocco
+  MD: Moldova
+  MK: North Macedonia
+  MT: Malta
+  MX: Mexico
+  MY: Malaysia
+  NG: Nigeria
+  NL: Netherlands
+  NZ: New Zealand
+  PH: Philippines
+  PK: Pakistan
+  PL: Poland
+  PR: Puerto Rico
+  PT: Portugal
+  RO: Romania
+  RU: Russia
+  SE: Sweden
+  SG: Singapore
+  SI: Slovenia
+  SK: Slovakia
+  TH: Thailand
+  TR: Turkey
+  UA: Ukraine
+  US: United States
+  VN: Vietnam
+  
+company_size: The median number of people that worked for the company during the year
+  L : Large
+  M : Medium
+  S : Small
+
+# Descriptive Analysis 
+```{r}
+str(ds_salaries)
+```
+## Find null values
+
+```{r}
+summary(colSums(is.na(ds_salaries)))
+colSums(is.na(ds_salaries))
+```
+
+## Find the duplicates
+```{r}
+# Find duplicates in the dataset
+duplicates <- duplicated(ds_salaries)
+
+# Subset the dataset to remove duplicates
+unique_data <- ds_salaries[!duplicates, ]
+
+# Print the unique dataset without duplicates
+ds_salaries <- unique_data
+```
+
+```{r}
+dim(ds_salaries)
+```
+
+## Convert Categorical to factors
+
+```{r}
+convert_categorical_to_levels <- function(dataset) {
+  for (col in colnames(dataset)) {
+    if (is.factor(dataset[[col]]) || is.character(dataset[[col]])) {
+      dataset[[col]] <- factor(dataset[[col]])
+    }
+  }
+  return(dataset)
+}
+
+# Example usage
+ds_salaries <- convert_categorical_to_levels(ds_salaries)
+```
+
+```{r}
+str(ds_salaries)
+```
+## Load Libraries
+
+```{r}
+library(FactoMineR)
+library(factoextra)
+library(foreign)
+library(psych)
+library(lavaan)
+library(semPlot)
+```
+
+## Convert factors to numerical
+
+```{r}
+convert_categorical_to_numeric <- function(dataset) {
+  for (col in colnames(dataset)) {
+    if (is.factor(dataset[[col]]) || is.character(dataset[[col]])) {
+      dataset[[col]] <- as.numeric(dataset[[col]])
+    }
+  }
+  return(dataset)
+}
+
+# Example usage
+ds_salaries1 <- convert_categorical_to_numeric(ds_salaries)
+```
+
+```{r}
+str(ds_salaries1)
+```
+
+## Applt KMO
+
+```{r}
+psych::KMO(ds_salaries1)
+```
+## Apply Bartlett Test
+
+```{r}
+psych::cortest.bartlett(ds_salaries1)
+```
+## Apply Parallel to find factors and componets
+
+```{r}
+psych::fa.parallel(ds_salaries1)
+```
+## PCA
+
+```{r}
+model_pca <- psych::principal(ds_salaries1, nfactors = 4)
+```
+
+```{r}
+coms <- model_pca$communality
+round(coms, 2)
+```
+```{r}
+model_pca
+```
+## EFA
+
+```{r}
+library(GPArotation)
+model_fa <- fa(ds_salaries1, nfactors = 4) 
+model_fa
+```
+
+## CFA
+
+```{r}
+syntx <- '
+  RC1 =~ salary_currency + salary_in_usd + employee_residence + company_location
+  RC2 =~ work_year + employment_type + remote_ratio
+  RC4 =~ salary + company_size
+  RC3 =~ employment_type + job_title
+
+  SAQ =~ RC1
+  SAQ =~ RC2
+  SAQ =~ RC4
+  SAQ =~ RC3
+  '
+
+model_cfa <- lavaan::cfa(syntx, data = ds_salaries1)
+model_cfa
+```
+```{r}
+varTable(model_cfa)
+
+```
+
+```{r}
+summary(model_cfa, fit.measures = TRUE, standardized = TRUE)
+```
+
+
+```{r}
+fits <- fitMeasures(model_cfa)
+data.frame(fits = round(fits, 2))
+```
+
+```{r}
+semPlot::semPaths(model_cfa, what = "est", rotation = 2, 
+  style = "lisrel", font = 2)  
+title("Row Estimations")
+```
+```{r}
+semPlot::semPaths(model_cfa, what = "std", rotation = 2, 
+  style = "lisrel", font = 2, title = TRUE)
+title("Standardized Estimations")
+```
+
